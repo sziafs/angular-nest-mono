@@ -26,7 +26,7 @@ export class ProductService {
         }
     ]
 
-    findAll() {
+    findAll(): Product[] {
         return this.products
     }
 
@@ -35,7 +35,7 @@ export class ProductService {
         return item
     }
 
-    create(product: Product) {
+    create(product: Product): Product {
         this.products.push(product)
         return product
     }

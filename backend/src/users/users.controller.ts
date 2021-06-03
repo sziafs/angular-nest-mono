@@ -1,7 +1,7 @@
 import { UserService } from './shared/user.service';
-import { Body, Controller, Post, Get } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Delete } from '@nestjs/common';
 import { User } from './shared/user';
-import UserEntity from './model/user.entity';
+import { UserEntity } from './model/user.entity';
 
 @Controller('users')
 export class UsersController {
@@ -15,10 +15,10 @@ export class UsersController {
         return await this.userService.findAll()
     }
 
-    // @Get(':id')
-    // async findById(@Param('id') id: number): Promise<Product> {
-    //     return this.productService.findById(id)
-    // }
+    @Get(':id')
+    async findByOne(@Param('id') id: number): Promise<UserEntity> {
+        return this.userService.findOne(id)
+    }
 
     @Post()
     async create(@Body() user: User): Promise<UserEntity> {
@@ -31,8 +31,8 @@ export class UsersController {
     //     return this.productService.update(product)
     // }
 
-    // @Delete(':id')
-    // async delete(@Param('id') id: number) {
-    //     this.productService.delete(id)
-    // }
+    @Delete(':id')
+    async remove(@Param('id') id: number) {
+        this.userService.remove(id)
+    }
 }

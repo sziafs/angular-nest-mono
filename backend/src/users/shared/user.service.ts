@@ -1,28 +1,30 @@
 import { User } from './user';
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+
 import { Repository } from 'typeorm';
-import UserEntity from '../model/user.entity';
+import { UserEntity } from '../model/user.entity';
 
 @Injectable()
 export class UserService {
 
     constructor(
         @InjectRepository(UserEntity)
-        private userRepository: Repository<UserEntity>
+        private usersRepository: Repository<UserEntity>
     ) { }
 
-    async findAll(): Promise<UserEntity[]> {
-        return await this.userRepository.find()
+    findAll(): Promise<UserEntity[]> {
+        return this.usersRepository.find()
     }
 
-    // findById(id: number) {
-    //     const item = this.users.find((item) => item.id == id)
-    //     return item
-    // }
+    findOne(id: number) {
+        return this.usersRepository.findOne(id);
+    }
 
     async create(user: User): Promise<UserEntity> {
-        return await this.userRepository.save(user)
+        const newUser = this.usersRepository.create(user)
+        await this.usersRepository.save(newUser)
+        return newUser
     }
 
     // update(product: Product) {
@@ -36,8 +38,7 @@ export class UserService {
     //     return item
     // }
 
-    // delete(id: number) {
-    //     const itemIndex = this.users.findIndex((item) => item.id == id)
-    //     this.users.splice(itemIndex, 1)
-    // }
+    async remove(id: number) {
+        await this.usersRepository.delete(id);
+    }
 }

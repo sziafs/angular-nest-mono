@@ -1,3 +1,4 @@
+import { ProductEntity } from './product.entity';
 import { ProductService } from './shared/product.service';
 import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { Product } from './shared/product';
@@ -10,13 +11,13 @@ export class ProductsController {
     ) {  }
 
     @Get()
-    async findAll(): Promise<Product[]> {
+    async findAll(): Promise<ProductEntity[]> {
         return this.productService.findAll()
     }
 
     @Get(':id')
-    async findById(@Param('id') id: number): Promise<Product> {
-        return this.productService.findById(id)
+    async findOne(@Param('id') id: number): Promise<Product> {
+        return this.productService.findOne(id)
     }
 
     @Post()
@@ -31,7 +32,7 @@ export class ProductsController {
     }
 
     @Delete(':id')
-    async delete(@Param('id') id: number) {
-        this.productService.delete(id)
+    async remove(@Param('id') id: number) {
+        this.productService.remove(id)
     }
 }

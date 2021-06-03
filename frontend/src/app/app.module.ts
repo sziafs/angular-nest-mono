@@ -36,6 +36,12 @@ import { ProductCrudComponent } from './views/product-crud/product-crud.componen
 import { RedDirective } from './directives/red.directive';
 import { ForDirective } from './directives/for.directive';
 
+import { UserCrudComponent } from './views/user-crud/user-crud.component';
+import { UserCreateComponent } from './components/user/user-create/user-create.component';
+import { UserDeleteComponent } from './components/user/user-delete/user-delete.component';
+import { UserReadComponent } from './components/user/user-read/user-read.component';
+import { UserUpdateComponent } from './components/user/user-update/user-update.component';
+
 
 registerLocaleData(localePt);
 
@@ -57,6 +63,11 @@ registerLocaleData(localePt);
     ProductCrudComponent,
     RedDirective,
     ForDirective,
+    UserCrudComponent,
+    UserCreateComponent,
+    UserDeleteComponent,
+    UserReadComponent,
+    UserUpdateComponent,
   ],
   imports: [
     BrowserModule,

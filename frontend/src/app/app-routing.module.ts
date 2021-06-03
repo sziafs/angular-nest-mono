@@ -1,3 +1,7 @@
+import { UserDeleteComponent } from './components/user/user-delete/user-delete.component';
+import { UserUpdateComponent } from './components/user/user-update/user-update.component';
+import { UserCreateComponent } from './components/user/user-create/user-create.component';
+import { UserCrudComponent } from './views/user-crud/user-crud.component';
 import { ProductDeleteComponent } from './components/product/product-delete/product-delete.component';
 import { ProductUpdateComponent } from './components/product/product-update/product-update.component';
 import { NgModule } from "@angular/core";
@@ -29,6 +33,22 @@ const routes: Routes = [
     path: "products/delete/:id",
     component: ProductDeleteComponent
   },
+  {
+    path: "users",
+    component: UserCrudComponent
+  },
+  {
+    path: "users/create",
+    component: UserCreateComponent
+  },
+  {
+    path: "users/update/:id",
+    component: UserUpdateComponent
+  },
+  {
+    path: "users/delete/:id",
+    component: UserDeleteComponent
+  }
 ];
 
 @NgModule({

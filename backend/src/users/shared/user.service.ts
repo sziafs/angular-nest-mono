@@ -27,16 +27,20 @@ export class UserService {
         return newUser
     }
 
-    // update(product: Product) {
-    //     const item = this.findById(product.id)
+    async update(userData: User): Promise<UserEntity> {
+        const user = await this.findOne(userData.id)
 
-    //     if (item) {
-    //         item.name = product.name
-    //         item.price = product.price
-    //     }
-
-    //     return item
-    // }
+        if (userData) {
+            user.name = userData.name
+            user.email = userData.email
+            user.phone = userData.phone
+            user.password = userData.password
+        }
+        
+        await this.usersRepository.save(user)
+        
+        return user
+    }
 
     async remove(id: number) {
         await this.usersRepository.delete(id);

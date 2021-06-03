@@ -6,18 +6,13 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 
 import { AppService } from './app.service';
-import { getConnectionOptions } from 'typeorm';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
     ProductsModule, 
     UsersModule,
-    TypeOrmModule.forRootAsync({
-      useFactory: async () =>
-        Object.assign(await getConnectionOptions(), {
-          autoLoadEntities: true,
-        }),
-    })
+    DatabaseModule
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -1,5 +1,5 @@
 import { UserService } from './shared/user.service';
-import { Body, Controller, Post, Get, Param, Delete } from '@nestjs/common';
+import { Body, Controller, Post, Get, Param, Delete, Put } from '@nestjs/common';
 import { User } from './shared/user';
 import { UserEntity } from './model/user.entity';
 
@@ -25,11 +25,11 @@ export class UsersController {
         return await this.userService.create(user)
     }
 
-    // @Put(':id')
-    // async update(@Param('id') id: number, @Body() product: Product): Promise<Product> {
-    //     product.id = id
-    //     return this.productService.update(product)
-    // }
+    @Put(':id')
+    async update(@Param('id') id: number, @Body() user: User): Promise<UserEntity> {
+        user.id = id
+        return this.userService.update(user)
+    }
 
     @Delete(':id')
     async remove(@Param('id') id: number) {

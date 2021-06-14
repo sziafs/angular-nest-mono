@@ -61,6 +61,14 @@ export class UserService {
     );
   }
 
+  findUserByEmail(email: string): Promise<UserEntity> {
+    return this.userRepository.findOne({
+      where: {
+        email,
+      },
+    });
+  }
+
   private mailExists(email: string): Observable<boolean> {
     return from(this.userRepository.findOne({ email })).pipe(
       map((user: User) => {

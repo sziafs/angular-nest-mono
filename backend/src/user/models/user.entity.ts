@@ -11,9 +11,11 @@ export class UserEntity {
   @Column({ unique: true })
   email: string;
 
-  @Column({ select: false })
+  // @Column({ select: false })
+  @Column({ select: true })
   password: string;
 
+  // * not working why my dear???
   @BeforeInsert()
   emailToLowerCase() {
     this.email = this.email.toLowerCase();

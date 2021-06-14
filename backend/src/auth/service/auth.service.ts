@@ -6,15 +6,18 @@ import {
   HttpStatus,
   forwardRef,
   Inject,
+  Logger,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { UserService } from 'src/user/service/user.service';
-import { User } from 'src/user/models/user.interface';
 import { JwtService } from '@nestjs/jwt';
 
 const bcrypt = require('bcrypt');
 
 @Injectable()
 export class AuthService {
+  private readonly logger = new Logger(AuthService.name);
+
   constructor(
     @Inject(forwardRef(() => UserService))
     private userService: UserService,
@@ -41,6 +44,11 @@ export class AuthService {
 
   async validateUser(userEmail: string, userPassword: string) {
     const user = await this.userService.findUserByEmail(userEmail);
+    if (!user) {
+      this.logger.debug(`User ${userEmail} not found`);
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     if (user && user.password === userPassword) {
       const { id, name, email } = user;
       return { id, name, email };

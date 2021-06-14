@@ -1,15 +1,18 @@
 import { from, Observable } from 'rxjs';
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserEntity } from '../models/user.entity';
 import { User } from '../models/user.interface';
+import { map, switchMap } from 'rxjs/operators';
+import { AuthService } from 'src/auth/service/auth.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(UserEntity)
     private readonly userRepository: Repository<UserEntity>,
+    private authService: AuthService,
   ) {}
 
   findAll(): Observable<User[]> {
@@ -20,17 +23,25 @@ export class UserService {
     return from(this.userRepository.findOne(id));
   }
 
-  // private
-  //   findByEmail(email: string): Promise<UserEntity> {
-  //     return this.userRepository.findOne({
-  //       where: {
-  //         email,
-  //       },
-  //     });
-  //   }
-
   create(user: User): Observable<User> {
-    return from(this.userRepository.save(user));
+    return this.mailExists(user.email).pipe(
+      switchMap((exists: boolean) => {
+        if (!exists)
+          return this.authService.hashPassword(user.password).pipe(
+            switchMap((passwordHash: string) => {
+              user.password = passwordHash;
+              return from(this.userRepository.save(user)).pipe(
+                map((savedUser: User) => {
+                  const { ...user } = savedUser;
+                  return user;
+                }),
+              );
+            }),
+          );
+
+        throw new HttpException('Email already in use', HttpStatus.CONFLICT);
+      }),
+    );
   }
 
   update(id: number, user: User): Observable<any> {
@@ -39,5 +50,23 @@ export class UserService {
 
   remove(id: number): Observable<any> {
     return from(this.userRepository.delete(id));
+  }
+
+  findByEmail(email: string): Observable<User> {
+    return from(
+      this.userRepository.findOne(
+        { email },
+        { select: ['id', 'email', 'name', 'password'] },
+      ),
+    );
+  }
+
+  private mailExists(email: string): Observable<boolean> {
+    return from(this.userRepository.findOne({ email })).pipe(
+      map((user: User) => {
+        if (!user) return false;
+        return true;
+      }),
+    );
   }
 }

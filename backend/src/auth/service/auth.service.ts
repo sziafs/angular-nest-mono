@@ -20,8 +20,8 @@ export class AuthService {
 
   constructor(
     @Inject(forwardRef(() => UserService))
-    private userService: UserService,
-    private jwtService: JwtService,
+    private readonly userService: UserService,
+    private readonly jwtService: JwtService,
   ) {}
 
   hashPassword(password: string): Observable<string> {
@@ -49,12 +49,15 @@ export class AuthService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
+    if (userPassword !== user.password) {
+      this.logger.debug(`Invalid credentials for user ${userEmail}`);
+      throw new UnauthorizedException();
+    }
+
     if (user && user.password === userPassword) {
       const { id, name, email } = user;
       return { id, name, email };
     }
-
-    return null;
   }
 
   // login(loginUserDto: User): Observable<string> {

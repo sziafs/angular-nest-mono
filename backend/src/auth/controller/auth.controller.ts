@@ -15,7 +15,8 @@ import { LocalGuard } from '../guards/local-auth.guard';
 export class AuthController {
   constructor(private authService: AuthService) {}
 
-  // @Post()
+  // @Post('/login')
+  // @UseGuards(LocalGuard)
   // @HttpCode(200)
   // login(@Body() loginUserDto: User): Observable<string> {
   //   return this.authService.login(loginUserDto);

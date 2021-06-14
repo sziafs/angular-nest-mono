@@ -15,6 +15,9 @@ export class UserEntity {
   @Column({ select: true })
   password: string;
 
+  @Column({ unique: true })
+  cpf: string;
+
   // * not working why my dear???
   @BeforeInsert()
   emailToLowerCase() {

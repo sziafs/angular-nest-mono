@@ -69,6 +69,10 @@ export class UserService {
     });
   }
 
+  findByCpf(cpf: string): Observable<UserEntity> {
+    return from(this.userRepository.findOne({ cpf }));
+  }
+
   private mailExists(email: string): Observable<boolean> {
     return from(this.userRepository.findOne({ email })).pipe(
       map((user: User) => {

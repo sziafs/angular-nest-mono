@@ -4,6 +4,8 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  Logger,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -15,6 +17,8 @@ import { CreateUserDto } from '../models/dto/CreateUser.dto';
 
 @Injectable()
 export class UserService {
+  private readonly logger = new Logger(UserService.name);
+
   constructor(
     @InjectRepository(UserEntity)
     private userRepository: Repository<UserEntity>,
@@ -26,7 +30,15 @@ export class UserService {
   }
 
   findOne(id: number): Observable<User> {
-    return from(this.userRepository.findOne(id));
+    return from(this.userRepository.findOne(id)).pipe(
+      map((user) => {
+        if (!user) {
+          this.logger.debug(`User ${id} not found`);
+          throw new NotFoundException();
+        }
+        return user;
+      }),
+    );
   }
 
   create(createUserDto: CreateUserDto): Observable<User> {
@@ -45,6 +57,9 @@ export class UserService {
             }),
           );
 
+        this.logger.debug(
+          `User ${createUserDto.email} ${createUserDto.cpf} already exists`,
+        );
         throw new HttpException('User already exists', HttpStatus.CONFLICT);
       }),
     );

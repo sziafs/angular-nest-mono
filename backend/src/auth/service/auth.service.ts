@@ -39,35 +39,6 @@ export class AuthService {
     return user;
   }
 
-  // login(loginUserDto: User): Observable<string> {
-  //   return this.userService.findByEmail(loginUserDto.email).pipe(
-  //     switchMap((user: User) => {
-  //       if (user) {
-  //         return this.validatePassword(
-  //           loginUserDto.password,
-  //           user.password,
-  //         ).pipe(
-  //           switchMap((passwordsMatches: boolean) => {
-  //             if (passwordsMatches) {
-  //               throw new HttpException(
-  //                 'Login was successfull',
-  //                 HttpStatus.ACCEPTED,
-  //               );
-  //             } else {
-  //               throw new HttpException(
-  //                 'Login was not successfull',
-  //                 HttpStatus.UNAUTHORIZED,
-  //               );
-  //             }
-  //           }),
-  //         );
-  //       } else {
-  //         throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-  //       }
-  //     }),
-  //   );
-  // }
-
   public async getTokenForUser(user: any) {
     const payload = { email: user.email, sub: user.id };
     return this.jwtService.sign(payload);

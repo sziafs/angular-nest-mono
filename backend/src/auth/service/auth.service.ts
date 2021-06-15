@@ -24,24 +24,6 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  hashPassword(password: string): Observable<string> {
-    return from<string>(bcrypt.hash(password, 12));
-  }
-
-  comparePasswords(
-    password: string,
-    storedPasswordHash: string,
-  ): Observable<any> {
-    return from(bcrypt.compare(password, storedPasswordHash));
-  }
-
-  private validatePassword(
-    password: string,
-    storedPasswordHash: string,
-  ): Observable<boolean> {
-    return this.comparePasswords(password, storedPasswordHash);
-  }
-
   async validateUser(userEmail: string, userPassword: string) {
     const user = await this.userService.findUserByEmail(userEmail);
     if (!user) {
@@ -49,15 +31,12 @@ export class AuthService {
       throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     }
 
-    if (userPassword !== user.password) {
+    if (!this.comparePasswords(userPassword, user.password)) {
       this.logger.debug(`Invalid credentials for user ${userEmail}`);
       throw new UnauthorizedException();
     }
 
-    if (user && user.password === userPassword) {
-      const { id, name, email } = user;
-      return { id, name, email };
-    }
+    return user;
   }
 
   // login(loginUserDto: User): Observable<string> {
@@ -89,10 +68,19 @@ export class AuthService {
   //   );
   // }
 
-  async login(user: any) {
+  public async getTokenForUser(user: any) {
     const payload = { email: user.email, sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+    return this.jwtService.sign(payload);
+  }
+
+  hashPassword(password: string): Observable<string> {
+    return from<string>(bcrypt.hash(password, 12));
+  }
+
+  comparePasswords(
+    password: string,
+    storedPasswordHash: string,
+  ): Observable<any> {
+    return from(bcrypt.compare(password, storedPasswordHash));
   }
 }

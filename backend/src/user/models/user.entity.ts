@@ -12,13 +12,12 @@ export class UserEntity {
   email: string;
 
   // @Column({ select: false })
-  @Column({ select: true })
+  @Column()
   password: string;
 
   @Column({ unique: true })
   cpf: string;
 
-  // * not working why my dear???
   @BeforeInsert()
   emailToLowerCase() {
     this.email = this.email.toLowerCase();

@@ -12,6 +12,7 @@ import {
 import { User } from '../models/user.interface';
 import { UserService } from '../service/user.service';
 import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
+import { CreateUserDto } from '../models/dto/CreateUser.dto';
 
 @Controller('users')
 export class UserController {
@@ -31,8 +32,8 @@ export class UserController {
 
   @Post()
   @UseGuards(JwtGuard)
-  create(@Body() user: User): Observable<User> {
-    return this.userService.create(user);
+  create(@Body() createUserDto: CreateUserDto): Observable<User> {
+    return this.userService.create(createUserDto);
   }
 
   @Put(':id')

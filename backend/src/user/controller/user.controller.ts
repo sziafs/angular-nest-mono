@@ -11,6 +11,9 @@ import {
   ParseIntPipe,
   Patch,
   HttpCode,
+  SerializeOptions,
+  UseInterceptors,
+  ClassSerializerInterceptor,
 } from '@nestjs/common';
 import { User } from '../models/user.interface';
 import { UserService } from '../service/user.service';
@@ -19,6 +22,7 @@ import { CreateUserDto } from '../models/dto/CreateUser.dto';
 
 @Controller('users')
 @UseGuards(JwtGuard)
+@SerializeOptions({ strategy: 'excludeAll' })
 export class UserController {
   constructor(private userService: UserService) {}
 
@@ -28,6 +32,7 @@ export class UserController {
   }
 
   @Get(':id')
+  @UseInterceptors(ClassSerializerInterceptor)
   findOne(@Param('id', ParseIntPipe) id: number): Observable<User> {
     return this.userService.findOne(id);
   }

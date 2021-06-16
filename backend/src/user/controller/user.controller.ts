@@ -1,13 +1,16 @@
+import { UpdateUserDto } from './../models/dto/UpdateUser.dto';
 import { Observable } from 'rxjs';
 import {
   Controller,
   Get,
   Post,
   Delete,
-  Put,
   Body,
   Param,
   UseGuards,
+  ParseIntPipe,
+  Patch,
+  HttpCode,
 } from '@nestjs/common';
 import { User } from '../models/user.interface';
 import { UserService } from '../service/user.service';
@@ -15,36 +18,36 @@ import { JwtGuard } from 'src/auth/guards/jwt-auth.guard';
 import { CreateUserDto } from '../models/dto/CreateUser.dto';
 
 @Controller('users')
+@UseGuards(JwtGuard)
 export class UserController {
   constructor(private userService: UserService) {}
 
   @Get()
-  @UseGuards(JwtGuard)
   findAll(): Observable<User[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  @UseGuards(JwtGuard)
-  findOne(@Param('id') id: number): Observable<User> {
+  findOne(@Param('id', ParseIntPipe) id: number): Observable<User> {
     return this.userService.findOne(id);
   }
 
   @Post()
-  @UseGuards(JwtGuard)
   create(@Body() createUserDto: CreateUserDto): Observable<User> {
     return this.userService.create(createUserDto);
   }
 
-  @Put(':id')
-  @UseGuards(JwtGuard)
-  update(@Param('id') id: number, @Body() user: User): Observable<User> {
-    return this.userService.update(id, user);
+  @Patch(':id')
+  update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateUserDto: UpdateUserDto,
+  ): Observable<string> {
+    return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtGuard)
-  remove(@Param('id') id: number) {
+  @HttpCode(204)
+  remove(@Param('id', ParseIntPipe) id: number) {
     this.userService.remove(id);
   }
 }

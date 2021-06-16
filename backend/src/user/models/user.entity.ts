@@ -14,11 +14,6 @@ export class UserEntity {
   @Column({ select: false })
   password: string;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 11 })
   cpf: string;
-
-  @BeforeInsert()
-  emailToLowerCase() {
-    this.email = this.email.toLowerCase();
-  }
 }

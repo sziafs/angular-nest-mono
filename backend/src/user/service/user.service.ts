@@ -1,3 +1,4 @@
+import { UpdateUserDto } from './../models/dto/UpdateUser.dto';
 import { from, Observable } from 'rxjs';
 import {
   BadRequestException,
@@ -26,7 +27,16 @@ export class UserService {
   ) {}
 
   findAll(): Observable<User[]> {
-    return from(this.userRepository.find());
+    return from(
+      this.userRepository.find({
+        order: {
+          name: 'ASC',
+          id: 'DESC',
+        },
+        take: 10,
+        cache: 30000,
+      }),
+    );
   }
 
   findOne(id: number): Observable<User> {
@@ -65,8 +75,22 @@ export class UserService {
     );
   }
 
-  update(id: number, user: User): Observable<any> {
-    return from(this.userRepository.update(id, user));
+  update(id: number, updateUserDto: UpdateUserDto): Observable<any> {
+    // return from(this.userRepository.update(id, user));
+    return from(this.userRepository.findOne(id)).pipe(
+      map((user) => {
+        if (!user) {
+          this.logger.debug(`User ${id} not found`);
+          throw new NotFoundException();
+        }
+        return from(
+          this.userRepository.save({
+            ...user,
+            ...updateUserDto,
+          }),
+        );
+      }),
+    );
   }
 
   remove(id: number): Observable<any> {
